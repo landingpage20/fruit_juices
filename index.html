@@ -60,7 +60,7 @@
     let sessionStart = Date.now();
     const trackingData = [];
 
-    // Link alla Web App di Google Sheets per tracking
+    // Link Web App con foglio "Tracking juice"
     const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyfnuvFw-dNGXg6G4iaGyEc9wiHY2df5HPFgKAt76ZpB_aV2SN8HxB186yI_WA85CqcOA/exec';
 
     function getUserIdFromURL() {
@@ -107,27 +107,39 @@
           </div>`;
       }).join('');
     }
-
-    function viewProduct(id) { trackEvent('product_view', id, products.find(p=>p.id===id).price); }
+    function viewProduct(id) { 
+      trackEvent('product_view', id, products.find(p => p.id === id).price); 
+    }
 
     function addToCart(event, id) {
       event.stopPropagation();
-      const product = products.find(p=>p.id===id);
-      const existing = cart.find(i=>i.id===id);
-      if(existing) existing.quantity++; else cart.push({...product, quantity:1});
+      const product = products.find(p => p.id === id);
+      const existing = cart.find(i => i.id === id);
+      if(existing) existing.quantity++; 
+      else cart.push({...product, quantity:1});
       trackEvent('add_to_cart', id, product.price);
       updateCart();
       const btn = document.getElementById(`btn-${id}`);
-      btn.classList.add('added'); btn.textContent='✓ Aggiunto';
-      setTimeout(()=>{btn.classList.remove('added'); btn.textContent='ADD TO CART';},1500);
+      btn.classList.add('added'); 
+      btn.textContent = '✓ Aggiunto';
+      setTimeout(() => {
+        btn.classList.remove('added'); 
+        btn.textContent = 'ADD TO CART';
+      }, 1500);
     }
 
     function updateCart() {
       const div = document.getElementById('cartItems');
       const totalDiv = document.getElementById('cartTotal');
-      if(cart.length===0){ div.innerHTML='<div class="empty-cart">Your cart is empty</div>'; totalDiv.textContent=''; return; }
-      div.innerHTML = cart.map(item=>`<div class="cart-item"><span>${item.name} x${item.quantity}</span><span>$${(item.price*item.quantity).toFixed(2)}</span></div>`).join('');
-      const total = cart.reduce((sum,i)=>sum+i.price*i.quantity,0);
+      if(cart.length === 0){
+        div.innerHTML = '<div class="empty-cart">Your cart is empty</div>'; 
+        totalDiv.textContent = ''; 
+        return;
+      }
+      div.innerHTML = cart.map(item => 
+        `<div class="cart-item"><span>${item.name} x${item.quantity}</span><span>$${(item.price*item.quantity).toFixed(2)}</span></div>`
+      ).join('');
+      const total = cart.reduce((sum,i) => sum + i.price*i.quantity, 0);
       totalDiv.textContent = `Total: $${total.toFixed(2)}`;
     }
 
@@ -139,7 +151,7 @@
       updateCart();
     }
 
-    window.addEventListener('beforeunload', ()=>trackEvent('session_end'));
+    window.addEventListener('beforeunload', () => trackEvent('session_end'));
 
     init();
   </script>
